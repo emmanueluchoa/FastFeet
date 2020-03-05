@@ -1,2 +1,2 @@
-# NodeJS Backend Server Template
-Template para projeto de servidor backend utilizando a tecnologia NodeJS.
+# GoStack - FastFeet
+Projeto de conclusão do bootcamp GoStack promovido pela RocketSeat utilizando as tecnologias NodeJS e React.
