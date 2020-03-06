@@ -1,7 +1,7 @@
 import * as YUP from 'yup';
 
 export default {
-  async checkIfRecipientIsValid(req, res, next) {
+  async checkIfRecipientModelIsValid(req, res, next) {
     try {
       const schema = YUP.object().shape({
         name: YUP.string().required('Name not provided!'),
