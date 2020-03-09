@@ -1,4 +1,5 @@
 import * as YUP from 'yup';
+import Recipient from '../app/models/Recipient';
 
 export default {
   async checkIfRecipientModelIsValid(req, res, next) {
@@ -37,7 +38,25 @@ export default {
         user_id: req.user_id,
       };
 
-      console.log(req.recipient);
+      return next();
+    } catch (error) {
+      return res
+        .status(401)
+        .json({ error: error.message ? error.message : error });
+    }
+  },
+
+  async checkIfRecipientExists(req, res, next) {
+    try {
+      const { id } = req.body;
+      if (!id) throw new Error('Recipient id does not provided!');
+
+      const recipientExists = await Recipient.findByPk(id);
+
+      if (!recipientExists) throw new Error('Recipient id does not exist!');
+
+      req.recipient = recipientExists;
+
       return next();
     } catch (error) {
       return res

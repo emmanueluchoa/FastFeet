@@ -28,12 +28,12 @@ routes.post(
   RecipientController.store
 );
 
-// routes.post(
-//   '/recipient',
-//   AuthMiddleware.validateToken,
-//   RecipientMiddleWare.checkIfRecipientModelIsValid,
-//   RecipientController.store
-// );
+routes.put(
+  '/recipient',
+  AuthMiddleware.validateToken,
+  RecipientMiddleWare.checkIfRecipientExists,
+  RecipientController.update
+);
 
 routes.post(
   '/users',
