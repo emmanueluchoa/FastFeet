@@ -28,6 +28,13 @@ routes.post(
   RecipientController.store
 );
 
+// routes.post(
+//   '/recipient',
+//   AuthMiddleware.validateToken,
+//   RecipientMiddleWare.checkIfRecipientModelIsValid,
+//   RecipientController.store
+// );
+
 routes.post(
   '/users',
   UserMiddleware.checkIfUserNotExists,

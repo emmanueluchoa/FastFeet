@@ -21,6 +21,14 @@ class User extends Model {
         user.password_hash = await bcrypt.hash(user.password, 8);
     });
 
+    this.addHook('beforeBulkUpdate', async params => {
+      const { password } = params.attributes;
+      if (password) {
+        params.attributes.password_hash = await bcrypt.hash(password, 8);
+        params.fields.push('password_hash');
+      }
+    });
+
     return this;
   }
 

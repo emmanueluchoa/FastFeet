@@ -1,3 +1,4 @@
+import bcrypt from 'bcryptjs';
 import User from '../models/User';
 
 class UserController {
@@ -17,7 +18,20 @@ class UserController {
     try {
       if (!req.user) throw new Error('User not provided!');
 
-      const user = User.update(req.user);
+      const { newEmail, newName, password } = req.body;
+
+      if (newEmail) req.user.email = newEmail;
+      if (newName) req.user.name = newName;
+      if (password) req.user.password = password;
+
+      const user = await User.update(
+        {
+          name: newName || req.user.name,
+          email: newEmail || req.user.email,
+          password: password || req.user.password,
+        },
+        { where: { id: req.user.id } }
+      );
 
       return res.status(200).json(user);
     } catch (error) {

@@ -31,22 +31,52 @@ export default {
   async validateUpdateUserModel(req, res, next) {
     try {
       const schema = YUP.object().shape({
-        name: YUP.string().required('Name not provided!'),
-        email: YUP.string().required('Email not provided!'),
-        password: YUP.string().required('Password not provided!'),
-        oldPassword: YUP.string().required('Current password not provided!'),
-        rePassword: YUP.string().required(
-          'Password confirmation not provided!'
+        name: YUP.string(),
+        email: YUP.string(),
+        newEmail: YUP.string().test(
+          'email',
+          'An user with new email provided already exists!',
+          async function newEmailCheck(value) {
+            let isValid = true;
+
+            if (value) {
+              const userExists = await User.findOne({
+                where: { email: value },
+              });
+
+              if (userExists) isValid = false;
+            }
+
+            return isValid;
+          }
+        ),
+        oldPassword: YUP.string(),
+        password: YUP.string().test(
+          'oldPassword',
+          'Old password not provided!',
+          function checkOldPasswordProvided(value) {
+            const { oldPassword } = this.parent;
+            let isValid = true;
+            if (value) isValid = value && oldPassword;
+
+            return isValid;
+          }
+        ),
+        rePassword: YUP.string().test(
+          're-passwordCheck',
+          'Re-password does not match!',
+          function checkRePassword(value) {
+            const { password } = this.parent;
+            let isValid = true;
+
+            if (password) isValid = value === password;
+
+            return isValid;
+          }
         ),
       });
 
       await schema.validate(req.body);
-
-      const { name, email, password } = req.body;
-
-      req.user.name = name;
-      req.user.email = email;
-      req.user.password = password;
 
       return next();
     } catch (error) {
@@ -81,12 +111,12 @@ export default {
 
   async checkIfUserPasswordMatch(req, res, next) {
     try {
-      const { password } = req.body;
+      const { password, oldPassword } = req.body;
 
       if (!req.user) throw new Error('User not found!');
 
-      if (!(await req.user.checkPassword(password)))
-        throw new Error('Password doesnt match!');
+      if (!(await req.user.checkPassword(oldPassword || password)))
+        throw new Error('Password does not match!');
 
       return next();
     } catch (error) {
