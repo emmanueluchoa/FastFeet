@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { promisify } from 'util';
-import authConfiguration from '../configurations/auth';
+import authConfiguration from '../configurations/AuthConfiguration';
 
 export default {
   async validateToken(req, res, next) {
